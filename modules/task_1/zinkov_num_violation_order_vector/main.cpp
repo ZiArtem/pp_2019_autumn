@@ -6,7 +6,7 @@
 
 TEST(Num_Violation_Order_Vector, Test_Num) {
   int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);  //
   std::vector<int> global_vec;
   const int size_vector = 100;
   if (rank == 0) {
