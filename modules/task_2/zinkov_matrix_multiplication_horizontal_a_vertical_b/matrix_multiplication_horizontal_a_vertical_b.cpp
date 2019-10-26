@@ -32,7 +32,7 @@ std::vector<int> getMatrixMultiplication(std::vector<int> matrix_a, std::vector<
     for (int j = 0; j < matrix_side_size; j++) {
       matrix_c[i * matrix_side_size + j] = 0;
       for (int k = 0; k < matrix_side_size; k++) {
-        matrix_c[i * matrix_side_size + j] = matrix_c[i * matrix_side_size + j] 
+        matrix_c[i * matrix_side_size + j] = matrix_c[i * matrix_side_size + j]
         + matrix_a[i * matrix_side_size + k] * matrix_b[k * matrix_side_size + j];
       }
     }
@@ -40,7 +40,8 @@ std::vector<int> getMatrixMultiplication(std::vector<int> matrix_a, std::vector<
   return matrix_c;
 }
 
-std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std::vector<int> matrix_b, int matrix_side_size) {
+std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a,
+  std::vector<int> matrix_b, int matrix_side_size) {
   int size, rank;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -78,7 +79,7 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
 
   if (residue_size == 0) {
     local_vec_b.resize(matrix_side_size * length_small_block);
-    if (rank == 0)	{
+    if (rank == 0) {
       local_vec_b1.resize(matrix_side_size * length_small_block);
     }
   } else {
@@ -109,7 +110,8 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
     lenght_curr_block = length_small_block;
   }
 
-  MPI_Scatterv(matrix_a.data(), sendcounts, displs, MPI_INT, &local_vec_a.front(), sendcounts[rank], MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Scatterv(matrix_a.data(), sendcounts, displs, MPI_INT,
+    &local_vec_a.front(), sendcounts[rank], MPI_INT, 0, MPI_COMM_WORLD);
 
   if (rank == 0) {
     for (int i = 0; i < matrix_side_size; i++) {
@@ -127,8 +129,9 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
       f = 1;
     }
 
-    for (int i = f; i < size ; i++)	{
-      MPI_Send(matrix_b.data() + residue_size * length_big_block + (i - residue_size) * length_small_block, 1, MPI_SMALL_BLOCK, i, 0, MPI_COMM_WORLD);
+    for (int i = f; i < size ; i++) {
+      MPI_Send(matrix_b.data() + residue_size * length_big_block + (i - residue_size)
+        * length_small_block, 1, MPI_SMALL_BLOCK, i, 0, MPI_COMM_WORLD);
     }
   } else {
     MPI_Status status;
@@ -141,7 +144,7 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
 
   int size_recv_block;
   int indent_matrix = 0;
-	
+
   for (int i = 0; i < rank; i++) {
     if (i % size < residue_size) {
       lenght_curr_block = length_big_block;
@@ -167,13 +170,13 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
         }
       }
     }
-		
+
     indent_matrix += lenght_curr_block;
-		
+
     if (indent_matrix == matrix_side_size) {
       indent_matrix = 0;
     }
-		
+	
     if (i < size - 1) {
       MPI_Status status;
 
@@ -182,16 +185,21 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
 
       if (rank == 0) {
         local_vec_b1 = local_vec_b;
-        MPI_Recv(&local_vec_b.front(), matrix_side_size * size_recv_block, MPI_INT, (rank + 1) % size, 1, MPI_COMM_WORLD, &status);
-        MPI_Send(local_vec_b1.data(), matrix_side_size* lenght_curr_block, MPI_INT, (rank + size - 1) % size, 1, MPI_COMM_WORLD);
+        MPI_Recv(&local_vec_b.front(), matrix_side_size * size_recv_block,
+          MPI_INT, (rank + 1) % size, 1, MPI_COMM_WORLD, &status);
+        MPI_Send(local_vec_b1.data(), matrix_side_size* lenght_curr_block,
+          MPI_INT, (rank + size - 1) % size, 1, MPI_COMM_WORLD);
       } else {
-        MPI_Send(local_vec_b.data(), matrix_side_size* lenght_curr_block, MPI_INT, (rank + size - 1) % size, 1, MPI_COMM_WORLD);
-        MPI_Recv(&local_vec_b.front(), matrix_side_size* size_recv_block, MPI_INT, (rank + 1) % size, 1, MPI_COMM_WORLD, &status);
+        MPI_Send(local_vec_b.data(), matrix_side_size* lenght_curr_block,
+          MPI_INT, (rank + size - 1) % size, 1, MPI_COMM_WORLD);
+        MPI_Recv(&local_vec_b.front(), matrix_side_size* size_recv_block,
+          MPI_INT, (rank + 1) % size, 1, MPI_COMM_WORLD, &status);
       }
     }
   }
 
-  MPI_Gatherv(local_vec_c.data(), sendcounts[rank], MPI_INT, &resulting_matrix.front(), sendcounts, displs, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Gatherv(local_vec_c.data(), sendcounts[rank], MPI_INT, &resulting_matrix.front(),
+    sendcounts, displs, MPI_INT, 0, MPI_COMM_WORLD);
   MPI_Type_free(&MPI_BIG_BLOCK);
   MPI_Type_free(&MPI_SMALL_BLOCK);
   return resulting_matrix;
