@@ -32,13 +32,13 @@ std::vector<int> getMatrixMultiplication(std::vector<int> matrix_a, std::vector<
     for (int j = 0; j < matrix_side_size; j++) {
       matrix_c[i * matrix_side_size + j] = 0;
       for (int k = 0; k < matrix_side_size; k++) {
-        matrix_c[i * matrix_side_size + j] = matrix_c[i * matrix_side_size + j] + matrix_a[i * matrix_side_size + k] * matrix_b[k * matrix_side_size + j];
+        matrix_c[i * matrix_side_size + j] = matrix_c[i * matrix_side_size + j] 
+        + matrix_a[i * matrix_side_size + k] * matrix_b[k * matrix_side_size + j];
       }
     }
   }
   return matrix_c;
 }
-
 
 std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std::vector<int> matrix_b, int matrix_side_size) {
   int size, rank;
@@ -53,10 +53,8 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
   std::vector<int> resulting_matrix(matrix_side_size * matrix_side_size);
   std::vector<int> local_vec_a, local_vec_b, local_vec_b1, local_vec_c;
 
-  if (matrix_side_size / size < 1)
-  {
+  if (matrix_side_size / size < 1) {
     if (rank == 0) {
-
       resulting_matrix = getMatrixMultiplication(matrix_a, matrix_b, matrix_side_size);
     }
     return resulting_matrix;
@@ -70,8 +68,7 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
   MPI_Type_vector(matrix_side_size, length_big_block, matrix_side_size, MPI_INT, &MPI_BIG_BLOCK);
   MPI_Type_commit(&MPI_BIG_BLOCK);
 
-  if (rank < residue_size)
-  {
+  if (rank < residue_size) {
     local_vec_a.resize(matrix_side_size * length_big_block);
     local_vec_c.resize(matrix_side_size * length_big_block);
   } else {
@@ -79,15 +76,12 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
     local_vec_c.resize(matrix_side_size * length_small_block);
   }
 
-  if (residue_size == 0)
-  {
+  if (residue_size == 0) {
     local_vec_b.resize(matrix_side_size * length_small_block);
     if (rank == 0)	{
       local_vec_b1.resize(matrix_side_size * length_small_block);
     }
-  }
-  else
-  {
+  } else {
     local_vec_b.resize(matrix_side_size * length_big_block);
     if (rank == 0) {
       local_vec_b1.resize(matrix_side_size * length_big_block);
@@ -97,17 +91,14 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
   int* sendcounts = new int[size];
   int* displs = new int[size];
 
-  for (int i = 0; i < size; i++)
-  {
+  for (int i = 0; i < size; i++) {
     displs[i] = 0;
     if (i < residue_size) {
       sendcounts[i] = length_big_block * matrix_side_size;
-    }
-    else {
+    } else {
       sendcounts[i] = length_small_block * matrix_side_size;
     }
-    if (i > 0)
-    {
+    if (i > 0) {
       displs[i] = displs[i - 1] + sendcounts[i - 1];
     }
   }
@@ -120,16 +111,14 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
 
   MPI_Scatterv(matrix_a.data(), sendcounts, displs, MPI_INT, &local_vec_a.front(), sendcounts[rank], MPI_INT, 0, MPI_COMM_WORLD);
 
-  if (rank == 0)
-  {
+  if (rank == 0) {
     for (int i = 0; i < matrix_side_size; i++) {
       for (int j = 0; j < lenght_curr_block; j++) {
         local_vec_b[i * lenght_curr_block + j] = matrix_b[j + matrix_side_size * i];
       }
     }
 
-    for (int i = 1; i < residue_size; i++)
-    {
+    for (int i = 1; i < residue_size; i++) {
       MPI_Send(matrix_b.data() + i * length_big_block, 1, MPI_BIG_BLOCK, i, 0, MPI_COMM_WORLD);
     }
 
@@ -153,23 +142,19 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
   int size_recv_block;
   int indent_matrix = 0;
 	
-  for (int i = 0; i < rank; i++)
-  {
+  for (int i = 0; i < rank; i++) {
     if (i % size < residue_size) {
       lenght_curr_block = length_big_block;
-    }
-    else {
+    } else {
       lenght_curr_block = length_small_block;
     }
     indent_matrix += lenght_curr_block;
   }
 
-  for (int i = 0; i < size; i++)
-  {
+  for (int i = 0; i < size; i++) {
     if ((rank  + i) % size < residue_size) {
       lenght_curr_block = length_big_block;
-    }
-    else {
+    } else {
       lenght_curr_block = length_small_block;
     }
 
@@ -177,15 +162,15 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
       for (int l = 0; l < matrix_side_size; l++) {
         for (size_t k = 0; k < lenght_curr_block; k++) {
           local_vec_c[(indent_matrix + j * matrix_side_size + k) % local_vec_c.size()] =
-            local_vec_c[(indent_matrix + j * matrix_side_size + k) % local_vec_c.size()] + local_vec_a[matrix_side_size * j + l] * local_vec_b[k + l * lenght_curr_block];
+            local_vec_c[(indent_matrix + j * matrix_side_size + k) % local_vec_c.size()] +
+            local_vec_a[matrix_side_size * j + l] * local_vec_b[k + l * lenght_curr_block];
         }
       }
     }
 		
     indent_matrix += lenght_curr_block;
 		
-    if (indent_matrix == matrix_side_size)
-    {
+    if (indent_matrix == matrix_side_size) {
       indent_matrix = 0;
     }
 		
@@ -195,8 +180,7 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std:
       MPI_Send(&lenght_curr_block, 1, MPI_INT, (rank + size - 1) % size, 0, MPI_COMM_WORLD);
       MPI_Recv(&size_recv_block, 1, MPI_INT, (rank + 1) % size, 0, MPI_COMM_WORLD, &status);
 
-      if (rank == 0)
-      {
+      if (rank == 0) {
         local_vec_b1 = local_vec_b;
         MPI_Recv(&local_vec_b.front(), matrix_side_size * size_recv_block, MPI_INT, (rank + 1) % size, 1, MPI_COMM_WORLD, &status);
         MPI_Send(local_vec_b1.data(), matrix_side_size* lenght_curr_block, MPI_INT, (rank + size - 1) % size, 1, MPI_COMM_WORLD);

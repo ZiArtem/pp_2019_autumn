@@ -7,6 +7,7 @@
 
 std::vector<int> getRandomMatrix(int  matrix_side_size);
 std::vector<int> getMatrixMultiplication(std::vector<int> matrix_a, std::vector<int> matrix_b, int matrix_side_size);
-std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a, std::vector<int> matrix_b, int matrix_side_size);
+std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a,
+  std::vector<int> matrix_b, int matrix_side_size);
 
 #endif  // MODULES_TASK_2_ZINKOV_MATRIX_MULTIPLICATION_HORIZONTAL_A_VERTICAL_B_MATRIX_MULTIPLICATION_HORIZONTAL_A_VERTICAL_B_H_
