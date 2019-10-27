@@ -176,10 +176,9 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a,
     if (indent_matrix == matrix_side_size) {
       indent_matrix = 0;
     }
-	
+
     if (i < size - 1) {
       MPI_Status status;
-
       MPI_Send(&lenght_curr_block, 1, MPI_INT, (rank + size - 1) % size, 0, MPI_COMM_WORLD);
       MPI_Recv(&size_recv_block, 1, MPI_INT, (rank + 1) % size, 0, MPI_COMM_WORLD, &status);
 
