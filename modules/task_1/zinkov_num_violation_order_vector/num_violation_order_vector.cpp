@@ -15,7 +15,7 @@ std::vector<int> getRandomVector(int length) {
   gen.seed(static_cast<unsigned int>(time(0)));
 
   for (auto& val : vec) {
-    val= gen() % 100;
+    val = gen() % 100;
   }
 
   return vec;
@@ -49,12 +49,12 @@ int getNumViolationOrderVectorParallel(std::vector<int> global_vec, int size_vec
     return global_num;
   }
 
-  if (rank==0) {
-    local_vec.resize (delta + residue);
+  if (rank == 0) {
+    local_vec.resize(delta + residue);
   } else {
-    local_vec.resize (delta + 1);
+    local_vec.resize(delta + 1);
   }
-	
+
   int* sendcounts = new int[size];
   int* displs = new int[size];
 
@@ -62,10 +62,10 @@ int getNumViolationOrderVectorParallel(std::vector<int> global_vec, int size_vec
     displs[i] = 0;
     if (i == 0) {
       sendcounts[i] = delta + residue;
-    }	else {
+    } else {
       sendcounts[i] = delta + 1;
     }
-    if (i > 0)	{
+    if (i > 0) {
       displs[i] = displs[i - 1] + sendcounts[i - 1]-1;
     }
   }
