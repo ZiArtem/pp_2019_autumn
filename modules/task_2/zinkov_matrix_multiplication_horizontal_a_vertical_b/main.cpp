@@ -2,7 +2,7 @@
 #include <gtest-mpi-listener.hpp>
 #include <gtest/gtest.h>
 #include <vector>
-#include "./matrix_multiplication_horizontal_a_vertical_b.h"
+#include "./matrix_multiplication_hor_a_ver_b.h"
 
 TEST(Matrix_Multiplication_Horizontal_A_Vertical_B, Test_Multiplication) {
   int rank;

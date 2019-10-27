@@ -5,7 +5,7 @@
 #include <ctime>
 #include <algorithm>
 #include <numeric>
-#include "../../../modules/task_2/zinkov_matrix_multiplication_horizontal_a_vertical_b/matrix_multiplication_horizontal_a_vertical_b.h"
+#include "../../../modules/task_2/zinkov_matrix_multiplication_hor_a_ver_b/matrix_multiplication_hor_a_ver_b.h"
 
 std::vector<int> getRandomMatrix(int matrix_side_size) {
   if (matrix_side_size < 1) {
