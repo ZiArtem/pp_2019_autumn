@@ -163,7 +163,7 @@ std::vector<int> getMatrixMultiplicationParellel(std::vector<int> matrix_a,
 
     for (size_t j = 0; j < local_vec_a.size() / matrix_side_size; j++) {
       for (int l = 0; l < matrix_side_size; l++) {
-        for (size_t k = 0; k < lenght_curr_block; k++) {
+        for (int k = 0; k < lenght_curr_block; k++) {
           local_vec_c[(indent_matrix + j * matrix_side_size + k) % local_vec_c.size()] =
             local_vec_c[(indent_matrix + j * matrix_side_size + k) % local_vec_c.size()] +
             local_vec_a[matrix_side_size * j + l] * local_vec_b[k + l * lenght_curr_block];
