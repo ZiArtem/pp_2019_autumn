@@ -17,7 +17,7 @@ std::vector<int> getRandomVector(int length) {
   gen.seed(static_cast<unsigned int>(time(0)));
 
   for (auto& val : vec) {
-    val = gen() % 1000000;
+    val = gen() % 10000;
   }
 
   return vec;
@@ -31,9 +31,9 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   const int delta = size_vec / size;
   const int residue = size_vec % size;
   std::vector<int> local_vec;
-  if (size_vec < size) {
-    if (rank == 0)
-      radix_sort(global_vec);
+  if (size_vec < size || size == 1) {
+    if (rank == 0 )
+      global_vec = radix_sort(global_vec);
     return global_vec;
   }
 
@@ -94,11 +94,10 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
       std::copy(even.begin(), even.end(), local_vec.begin());
       std::copy(odd.begin(), odd.end(), local_vec.begin() + even.size());
 
-      if (i + 1 != num_merge) {
+      if (i + 1 != num_merge)
         local_vec = transpos(local_vec, even.size(), odd.size());
-      } else {
+      else
         local_vec = merge(local_vec, even.size(), odd.size());
-      }
     }
     if (rank - displs_proc >= 0 && (rank - displs_proc) % merged_proc == 0) {
       length_send = local_vec.size();
