@@ -174,8 +174,7 @@ std::vector<int> merge_odd(const std::vector<int>& vec1, const std::vector<int>&
 std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
   if (even_size - odd_size == 2) {
     std::vector<int> res(vec.size());
-    size_t j = 0, k = 0;
-    int l = 0;
+    int j = 0, k = 0, l = 0;
 
     while (j < even_size && k < odd_size) {
       res[l++] = vec[j++];
@@ -204,8 +203,7 @@ std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
 
 std::vector<int>  merge(std::vector<int> vec, int even_size, int odd_size) {
   std::vector<int> res(vec.size());
-  size_t j = 0, k = 0;
-  int l = 0;
+  int j = 0, k = 0, int l = 0;
 
   while (j < even_size && k < odd_size) {
     res[l++] = vec[j++];
@@ -231,7 +229,7 @@ std::vector<int> radix_sort(std::vector<int> vec) {
 
   while (max / digit_pos > 0) {
     int digit_count[10] = { 0 };
-    for (auto i = 0; i < vec.size(); i++)
+    for (size_t i = 0; i < vec.size(); i++)
       digit_count[vec[i] / digit_pos % 10]++;
 
     for (int i = 1; i < 10; i++)
