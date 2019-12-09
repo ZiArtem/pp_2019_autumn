@@ -5,6 +5,7 @@
 #include <ctime>
 #include <algorithm>
 #include <iostream>
+#include <utility>
 #include "../../../modules/task_3/zinkov_radix_sort_merge_batcher/radix_sort_merge_batcher.h"
 
 std::vector<int> getRandomVector(int length) {
@@ -131,7 +132,7 @@ std::vector<int> shuffle(std::vector<int> vec) {
   return vec;
 }
 
-std::vector<int> merge_even(const std::vector<int>& vec1,const std::vector<int>& vec2) {
+std::vector<int> merge_even(const std::vector<int>& vec1, const std::vector<int>& vec2) {
   std::vector<int> res(vec1.size() / 2 + vec1.size() % 2 + vec2.size());
   int j = 0, k = 0, l = 0;
 
