@@ -94,10 +94,11 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
       std::copy(even.begin(), even.end(), local_vec.begin());
       std::copy(odd.begin(), odd.end(), local_vec.begin() + even.size());
 
-      if (i + 1 != num_merge)
+      if (i + 1 != num_merge) {
         local_vec = transpos(local_vec, even.size(), odd.size());
-      else
+      } else {
         local_vec = merge(local_vec, even.size(), odd.size());
+      }
     }
     if (rank - displs_proc >= 0 && (rank - displs_proc) % merged_proc == 0) {
       length_send = local_vec.size();
