@@ -5,7 +5,7 @@
 #include <ctime>
 #include <algorithm>
 #include <iostream>
-#include <windows.h>
+#include <utility>
 #include "../../../modules/task_3/zinkov_radix_sort_merge_batcher/radix_sort_merge_batcher.h"
 
 std::vector<int> getRandomVector(int length) {
@@ -40,8 +40,10 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   if (rank == 0) {
     local_vec.reserve(size_vec);
     local_vec.resize(delta + residue);
-  } else
+  } else {
     local_vec.resize(delta);
+  }
+    
 
 
   int* sendcounts = new int[size];
@@ -100,7 +102,6 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
         local_vec = merge(local_vec, even.size(), odd.size());
     }
     if (rank - displs_proc >= 0 && (rank - displs_proc) % merged_proc == 0) {
-
       length_send = local_vec.size();
       MPI_Sendrecv(&length_send, 1, MPI_INT, rank - displs_proc, 0, &length_recv, 1,
         MPI_INT, rank - displs_proc, 0, MPI_COMM_WORLD, &status);
@@ -155,7 +156,7 @@ std::vector<int> merge_even(const std::vector<int>& vec1, const std::vector<int>
 std::vector<int> merge_odd(const std::vector<int>& vec1, const std::vector<int>& vec2) {
   std::vector<int> res(vec1.size() / 2 + vec2.size());
   size_t j = vec1.size() / 2 + vec1.size() % 2, k = 0;
-   int l = 0;
+  int l = 0;
 
   while (j < vec1.size() && k < vec2.size()) {
     if (vec1[j] < vec2[k])
