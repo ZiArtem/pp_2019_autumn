@@ -120,13 +120,13 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
 std::vector<int> shuffle(std::vector<int> vec) {
   std::vector<int> tmp(vec.size());
 
-  for (int i = 0; i < vec.size() / 2 + vec.size() % 2; i++) {
+  for (size_t i = 0; i < vec.size() / 2 + vec.size() % 2; i++) {
     tmp[i] = vec[2 * i];
   }
-  for (int i = 1; i < vec.size(); i += 2) {
+  for (size_t i = 1; i < vec.size(); i += 2) {
     tmp[vec.size() / 2 + vec.size() % 2 + i / 2] = vec[i];
   }
-  for (auto i = 0; i < vec.size(); i++) {
+  for (size_t i = 0; i < vec.size(); i++) {
     vec[i] = tmp[i];
   }
   return vec;
@@ -134,7 +134,8 @@ std::vector<int> shuffle(std::vector<int> vec) {
 
 std::vector<int> merge_even(const std::vector<int>& vec1, const std::vector<int>& vec2) {
   std::vector<int> res(vec1.size() / 2 + vec1.size() % 2 + vec2.size());
-  int j = 0, k = 0, l = 0;
+  size_t j = 0, k = 0;
+  int l = 0;
 
   while (j < (vec1.size() / 2 + vec1.size() % 2) && k < (vec2.size())) {
     if (vec1[j] < vec2[k])
@@ -152,9 +153,8 @@ std::vector<int> merge_even(const std::vector<int>& vec1, const std::vector<int>
 
 std::vector<int> merge_odd(const std::vector<int>& vec1, const std::vector<int>& vec2) {
   std::vector<int> res(vec1.size() / 2 + vec2.size());
-  int j = vec1.size() / 2 + vec1.size() % 2,
-    k = 0,
-    l = 0;
+  size_t j = vec1.size() / 2 + vec1.size() % 2, k = 0;
+  int l = 0;
 
   while (j < vec1.size() && k < vec2.size()) {
     if (vec1[j] < vec2[k])
@@ -185,7 +185,7 @@ std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
     while (j < even_size)
       res[l++] = vec[j++];
 
-    for (int i = 1; i < res.size() - 1; i += 2) {
+    for (size_t i = 1; i < res.size() - 1; i += 2) {
       if (res[i] > res[i + 1])
         std::swap(res[i], res[i + 1]);
     }
@@ -214,7 +214,7 @@ std::vector<int> merge(std::vector<int> vec, int even_size, int odd_size) {
   while (j < even_size)
     res[l++] = vec[j++];
 
-  for (int i = 1; i < res.size() - 1; i += 2) {
+  for (size_t i = 1; i < res.size() - 1; i += 2) {
     if (res[i] > res[i + 1])
       std::swap(res[i], res[i + 1]);
   }
@@ -229,16 +229,16 @@ std::vector<int> radix_sort(std::vector<int> vec) {
 
   while (max / digit_pos > 0) {
     int digit_count[10] = { 0 };
-    for (auto i = 0; i < vec.size(); i++)
+    for (size_t i = 0; i < vec.size(); i++)
       digit_count[vec[i] / digit_pos % 10]++;
 
     for (int i = 1; i < 10; i++)
       digit_count[i] += digit_count[i - 1];
 
-    for (int i = vec.size() - 1; i >= 0; i--)
+    for (size_t i = vec.size() - 1; i >= 0; i--)
       res[--digit_count[vec[i] / digit_pos % 10]] = vec[i];
 
-    for (auto i = 0; i < vec.size(); i++)
+    for (size_t i = 0; i < vec.size(); i++)
       vec[i] = res[i];
 
     digit_pos *= 10;
