@@ -5,7 +5,6 @@
 #include <ctime>
 #include <algorithm>
 #include <iostream>
-#include <windows.h>
 #include "../../../modules/task_3/zinkov_radix_sort_merge_batcher/radix_sort_merge_batcher.h"
 
 std::vector<int> getRandomVector(int length) {
@@ -33,16 +32,16 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   std::vector<int> local_vec;
   if (size_vec < size) {
     if (rank == 0)
-      radix_sort(global_vec);
+      global_vec = radix_sort(global_vec);
     return global_vec;
   }
 
   if (rank == 0) {
     local_vec.reserve(size_vec);
     local_vec.resize(delta + residue);
-  } else
+  } else {
     local_vec.resize(delta);
-
+  }
 
   int* sendcounts = new int[size];
   int* displs = new int[size];
@@ -66,8 +65,8 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   while (pow(2, num_merge) < size)
     num_merge++;
 
-  radix_sort(local_vec);
-  shuffle(local_vec);
+  local_vec = radix_sort(local_vec);
+  local_vec = shuffle(local_vec);
 
   int merged_proc = 2, displs_proc = 1, length_send, length_recv;
   std::vector<int> res, even, odd;
@@ -100,7 +99,6 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
         local_vec = merge(local_vec, even.size(), odd.size());
     }
     if (rank - displs_proc >= 0 && (rank - displs_proc) % merged_proc == 0) {
-
       length_send = local_vec.size();
       MPI_Sendrecv(&length_send, 1, MPI_INT, rank - displs_proc, 0, &length_recv, 1,
         MPI_INT, rank - displs_proc, 0, MPI_COMM_WORLD, &status);
@@ -118,7 +116,7 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   return local_vec;
 }
 
-void shuffle(std::vector<int>& vec) {
+std::vector<int> shuffle(std::vector<int> vec) {
   std::vector<int> tmp(vec.size());
 
   for (int i = 0; i < vec.size() / 2 + vec.size() % 2; i++) {
@@ -130,9 +128,10 @@ void shuffle(std::vector<int>& vec) {
   for (auto i = 0; i < vec.size(); i++) {
     vec[i] = tmp[i];
   }
+  return vec;
 }
 
-std::vector<int> merge_even(std::vector<int>& vec1, std::vector<int>& vec2) {
+std::vector<int> merge_even(const std::vector<int>& vec1,const std::vector<int>& vec2) {
   std::vector<int> res(vec1.size() / 2 + vec1.size() % 2 + vec2.size());
   int j = 0, k = 0, l = 0;
 
@@ -190,7 +189,7 @@ std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
         std::swap(res[i], res[i + 1]);
     }
 
-    shuffle(res);
+    res = shuffle(res);
     return res;
 
   } else {
@@ -201,7 +200,7 @@ std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
   }
 }
 
-std::vector<int>  merge(std::vector<int> vec, int even_size, int odd_size) {
+std::vector<int> merge(std::vector<int> vec, int even_size, int odd_size) {
   std::vector<int> res(vec.size());
   int j = 0, k = 0, l = 0;
 
@@ -222,7 +221,7 @@ std::vector<int>  merge(std::vector<int> vec, int even_size, int odd_size) {
   return res;
 }
 
-void radix_sort(std::vector<int>& vec) {
+std::vector<int> radix_sort(std::vector<int> vec) {
   int max = 0, digit_pos = 1;
   std::vector<int> res(vec.size());
   max = *std::max_element(vec.begin(), vec.end());
@@ -243,4 +242,5 @@ void radix_sort(std::vector<int>& vec) {
 
     digit_pos *= 10;
   }
+  return vec;
 }
