@@ -43,8 +43,6 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   } else {
     local_vec.resize(delta);
   }
-    
-
 
   int* sendcounts = new int[size];
   int* displs = new int[size];
