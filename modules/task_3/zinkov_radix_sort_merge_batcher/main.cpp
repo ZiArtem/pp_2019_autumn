@@ -27,7 +27,7 @@ TEST(Radix_Sort_Merge_Batcher, Test_Disordered_Vector) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::vector<int> global_vec(50), res(50);
   if (rank == 0) {
-    for (auto i = 0; i < global_vec.size(); i++) {
+    for (int i = 0; i < global_vec.size(); i++) {
       global_vec[i] = global_vec.size() - i;
     }
     std::iota(res.begin(), res.end(), 1);
