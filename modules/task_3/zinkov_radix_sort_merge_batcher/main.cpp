@@ -50,7 +50,7 @@ TEST(Radix_Sort_Merge_Batcher, Test_Odd_Size_Vector) {
 
   std::vector<int> parralel = merge_batcher(global_vec, size_vector);
   if (rank == 0) {
-    radix_sort(global_vec);
+    global_vec = radix_sort(global_vec);
     ASSERT_EQ(parralel, global_vec);
   }
 }
