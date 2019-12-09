@@ -203,7 +203,7 @@ std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
 
 std::vector<int>  merge(std::vector<int> vec, int even_size, int odd_size) {
   std::vector<int> res(vec.size());
-  int j = 0, k = 0, int l = 0;
+  int j = 0, k = 0, l = 0;
 
   while (j < even_size && k < odd_size) {
     res[l++] = vec[j++];
