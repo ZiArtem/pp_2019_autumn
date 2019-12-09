@@ -58,7 +58,7 @@ TEST(Radix_Sort_Merge_Batcher, Test_Odd_Size_Vector) {
 TEST(Radix_Sort_Merge_Batcher, Test_Identical_Elements_Vector) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  std::vector<int> global_vec(200, 5);
+  std::vector<int> global_vec(200,5);
 
   std::vector<int> parralel = merge_batcher(global_vec, global_vec.size());
   if (rank == 0) {
@@ -97,7 +97,7 @@ TEST(Radix_Sort_Merge_Batcher, Test_Big_Size_Vector) {
   }
 }
 
-TEST(Radix_Sort_Merge_Batcher, Test_const_Vect) {
+TEST(Radix_Sort_Merge_Batcher, Test_Const_Vect) {
   int rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   std::vector<int> global_vec = {57, 39, 26, 163, 4, 273, 14, 2, 356, 37, 93, 3, 678, 256, 83, 17, 26};

@@ -5,7 +5,7 @@
 #include <ctime>
 #include <algorithm>
 #include <iostream>
-#include <utility>
+#include <windows.h>
 #include "../../../modules/task_3/zinkov_radix_sort_merge_batcher/radix_sort_merge_batcher.h"
 
 std::vector<int> getRandomVector(int length) {
@@ -33,16 +33,16 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
   std::vector<int> local_vec;
   if (size_vec < size) {
     if (rank == 0)
-      global_vec = radix_sort(global_vec);
+      radix_sort(global_vec);
     return global_vec;
   }
 
   if (rank == 0) {
     local_vec.reserve(size_vec);
     local_vec.resize(delta + residue);
-  } else {
+  } else
     local_vec.resize(delta);
-  }
+
 
   int* sendcounts = new int[size];
   int* displs = new int[size];
@@ -100,6 +100,7 @@ std::vector<int> merge_batcher(std::vector<int> global_vec, int size_vec) {
         local_vec = merge(local_vec, even.size(), odd.size());
     }
     if (rank - displs_proc >= 0 && (rank - displs_proc) % merged_proc == 0) {
+
       length_send = local_vec.size();
       MPI_Sendrecv(&length_send, 1, MPI_INT, rank - displs_proc, 0, &length_recv, 1,
         MPI_INT, rank - displs_proc, 0, MPI_COMM_WORLD, &status);
@@ -154,7 +155,7 @@ std::vector<int> merge_even(const std::vector<int>& vec1, const std::vector<int>
 std::vector<int> merge_odd(const std::vector<int>& vec1, const std::vector<int>& vec2) {
   std::vector<int> res(vec1.size() / 2 + vec2.size());
   size_t j = vec1.size() / 2 + vec1.size() % 2, k = 0;
-  int l = 0;
+   int l = 0;
 
   while (j < vec1.size() && k < vec2.size()) {
     if (vec1[j] < vec2[k])
@@ -174,7 +175,8 @@ std::vector<int> merge_odd(const std::vector<int>& vec1, const std::vector<int>&
 std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
   if (even_size - odd_size == 2) {
     std::vector<int> res(vec.size());
-    int j = 0, k = 0, l = 0;
+    size_t j = 0, k = 0;
+    int l = 0;
 
     while (j < even_size && k < odd_size) {
       res[l++] = vec[j++];
@@ -201,9 +203,10 @@ std::vector<int> transpos(std::vector<int> vec, int even_size, int odd_size) {
   }
 }
 
-std::vector<int> merge(std::vector<int> vec, int even_size, int odd_size) {
+std::vector<int>  merge(std::vector<int> vec, int even_size, int odd_size) {
   std::vector<int> res(vec.size());
-  int j = 0, k = 0, l = 0;
+  size_t j = 0, k = 0;
+  int l = 0;
 
   while (j < even_size && k < odd_size) {
     res[l++] = vec[j++];
@@ -229,13 +232,13 @@ std::vector<int> radix_sort(std::vector<int> vec) {
 
   while (max / digit_pos > 0) {
     int digit_count[10] = { 0 };
-    for (size_t i = 0; i < vec.size(); i++)
+    for (auto i = 0; i < vec.size(); i++)
       digit_count[vec[i] / digit_pos % 10]++;
 
     for (int i = 1; i < 10; i++)
       digit_count[i] += digit_count[i - 1];
 
-    for (size_t i = vec.size() - 1; i >= 0; i--)
+    for (int i = vec.size() - 1; i >= 0; i--)
       res[--digit_count[vec[i] / digit_pos % 10]] = vec[i];
 
     for (size_t i = 0; i < vec.size(); i++)
