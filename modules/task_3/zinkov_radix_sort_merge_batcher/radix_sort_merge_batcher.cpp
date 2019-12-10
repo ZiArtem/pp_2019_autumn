@@ -17,7 +17,7 @@ std::vector<int> getRandomVector(int length) {
   gen.seed(static_cast<unsigned int>(time(0)));
 
   for (auto& val : vec) {
-    val = gen() % 10000;
+    val = gen() % 100000;
   }
 
   return vec;
